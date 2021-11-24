@@ -1,11 +1,7 @@
 ﻿using CalypsoAPI.Core.Events;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CalypsoAPI.Core
@@ -38,10 +34,10 @@ namespace CalypsoAPI.Core
 
         private Dictionary<int, string> _messages { get; set; } = new Dictionary<int, string>();
 
-        public event EventHandler<CMMStateChangedEventArgs> CMMStateChanged;
+        internal event EventHandler<CmmStateChangedEventArgs> CmmStateChanged;
 
-        public MessageForm()
-        {            
+        internal MessageForm()
+        {
             InitializeComponent();
 
             WM_ZEISS_MDE_MSG_CNC_START = RegisterWindowMessage(nameof(ZEISS_MDE_MSG_CNC_START));
@@ -55,7 +51,6 @@ namespace CalypsoAPI.Core
             WM_ZEISS_MDE_MSG_CMM_CLEAR = RegisterWindowMessage(nameof(ZEISS_MDE_MSG_CMM_CLEAR));
             WM_ZEISS_MDE_MSG_CALYPSO_READY = RegisterWindowMessage(nameof(ZEISS_MDE_MSG_CALYPSO_READY));
             WM_ZEISS_MDE_MSG_CALYPSO_EXIT = RegisterWindowMessage(nameof(ZEISS_MDE_MSG_CALYPSO_EXIT));
-
 
             _messages.Add(WM_ZEISS_MDE_MSG_CALYPSO_EXIT, ZEISS_MDE_MSG_CALYPSO_EXIT);
             _messages.Add(WM_ZEISS_MDE_MSG_CALYPSO_READY, ZEISS_MDE_MSG_CALYPSO_READY);
@@ -81,6 +76,7 @@ namespace CalypsoAPI.Core
             this.Name = "MessageForm";
             this.ShowInTaskbar = false;
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.Load += new System.EventHandler(this.MessageForm_Load);
             this.ResumeLayout(false);
 
         }
@@ -89,44 +85,52 @@ namespace CalypsoAPI.Core
         {
             var value = m.Msg;
 
-            if(_messages.ContainsKey(value))
+            if (_messages.ContainsKey(value))
             {
                 var message = _messages[value];
                 switch (message)
                 {
                     case ZEISS_MDE_MSG_CNC_CONT:
                     case ZEISS_MDE_MSG_CNC_START:
-                        OnCMMStateChanged(new CMMStateChangedEventArgs() { Status = Status.Running });
+                        OnCmmStateChanged(new CmmStateChangedEventArgs() { Status = Status.Running });
                         break;
 
                     case ZEISS_MDE_MSG_CNC_STOP:
-                        OnCMMStateChanged(new CMMStateChangedEventArgs() { Status = Status.Paused });
+                        OnCmmStateChanged(new CmmStateChangedEventArgs() { Status = Status.Paused });
                         break;
 
                     case ZEISS_MDE_MSG_CNC_EXIT:
+                        OnCmmStateChanged(new CmmStateChangedEventArgs() { Status = Status.Stopped });
+                        break;
+
                     case ZEISS_MDE_MSG_CNC_END:
-                        OnCMMStateChanged(new CMMStateChangedEventArgs() { Status = Status.Stopped });
+                        OnCmmStateChanged(new CmmStateChangedEventArgs() { Status = Status.Finished });
                         break;
 
                     case ZEISS_MDE_MSG_CMM_ERROR:
-                        OnCMMStateChanged(new CMMStateChangedEventArgs() { Status = Status.Exception });
+                        OnCmmStateChanged(new CmmStateChangedEventArgs() { Status = Status.Exception });
                         break;
 
                     default:
                         break;
-                }              
+                }
             }
 
             base.WndProc(ref m);
         }
 
-        protected virtual void OnCMMStateChanged(CMMStateChangedEventArgs e)
+        protected virtual void OnCmmStateChanged(CmmStateChangedEventArgs e)
         {
-            CMMStateChanged?.Invoke(this, e);
+            CmmStateChanged?.Invoke(this, e);
         }
 
         [DllImport("User32.dll")]
         private static extern int RegisterWindowMessage(string lpString);
+
+        private void MessageForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 
 
