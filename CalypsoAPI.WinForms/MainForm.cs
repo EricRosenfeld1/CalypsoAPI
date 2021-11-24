@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using CalypsoAPI.Core;
+﻿using CalypsoAPI.Core;
 using CalypsoAPI.Core.Events;
+using System.Windows.Forms;
 
 namespace CalypsoAPI.WinForms
 {
@@ -22,11 +13,33 @@ namespace CalypsoAPI.WinForms
             var api = new Calypso(new ApiConfiguration(@"C:\Users\Public\Documents\Zeiss\CMMObserver"));
             api.Initialize();
 
-            api.CMMStateChanged += Api_CMMStateChanged;
+            api.CmmStateChanged += Api_CmmStateChanged;
             api.MeasurementInfoChanged += Api_MeasurementInfoChanged;
+            api.MeasurementPlanInfoChanged += Api_MeasurementPlanInfoChanged;
         }
 
-        private void Api_MeasurementInfoChanged(object sender, MeasurementInfoEventargs e)
+
+        private void Api_MeasurementPlanInfoChanged(object sender, MeasurementPlanInfoEventArgs e)
+        {
+            richTextBox2.Clear();
+            richTextBox2.AppendText($"Basesystem Name: {e.MeasurementPlanInfo.BaseSystemName} \r\n");
+            richTextBox2.AppendText($"Basesystem Type: {e.MeasurementPlanInfo.BaseSystemType} \r\n");
+            richTextBox2.AppendText($"Clear Old Res. : {e.MeasurementPlanInfo.ClearOldResults} \r\n");
+            richTextBox2.AppendText($"Compact Prot.  : {e.MeasurementPlanInfo.CompactProtocol} \r\n");
+            richTextBox2.AppendText($"Display Plots  : {e.MeasurementPlanInfo.DisplayPlots} \r\n");
+            richTextBox2.AppendText($"Featurelist    : {e.MeasurementPlanInfo.FeatureListName} \r\n");
+            richTextBox2.AppendText($"Filename       : {e.MeasurementPlanInfo.FileName} \r\n");
+            richTextBox2.AppendText($"Motion Planning: {e.MeasurementPlanInfo.MotionPlanning} \r\n");
+            richTextBox2.AppendText($"Navi Mode      : {e.MeasurementPlanInfo.NaviMode} \r\n");
+            richTextBox2.AppendText($"PDF Export     : {e.MeasurementPlanInfo.PdfExport} \r\n");
+            richTextBox2.AppendText($"Pres. Protocol : {e.MeasurementPlanInfo.PresentationProtocol} \r\n");
+            richTextBox2.AppendText($"Printer        : {e.MeasurementPlanInfo.Printer} \r\n");
+            richTextBox2.AppendText($"Print Plots    : {e.MeasurementPlanInfo.PrintPlots} \r\n");
+            richTextBox2.AppendText($"Run Mode       : {e.MeasurementPlanInfo.RunMode} \r\n");
+            richTextBox2.AppendText($"Speed          : {e.MeasurementPlanInfo.Speed} \r\n");
+        }
+
+        private void Api_MeasurementInfoChanged(object sender, MeasurementInfoEventArgs e)
         {
             richTextBox1.Clear();
             richTextBox1.AppendText($"Filename: {e.MeasurementInfo.MeasurementPlanFileName} \r\n");
@@ -41,7 +54,7 @@ namespace CalypsoAPI.WinForms
             richTextBox1.AppendText($"Firmware: {e.MeasurementInfo.FirmwareRevision} \r\n");
         }
 
-        private void Api_CMMStateChanged(object sender, CMMStateChangedEventArgs e)
+        private void Api_CmmStateChanged(object sender, CmmStateChangedEventArgs e)
         {
             lblStatus.Text = e.Status.ToString();
         }
