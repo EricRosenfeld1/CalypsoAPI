@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CalypsoAPI.Core.Models
+﻿namespace CalypsoAPI.Core.Models
 {
     public class MeasurementPlanInfo
     {
         public string FileName { get; set; } = string.Empty;
         public string BaseSystemName { get; set; } = string.Empty;
         public string BaseSystemType { get; set; } = string.Empty;
-        public bool ClearOldResults { get; set; }
-        public bool CompactProtocol { get; set; }
-        public bool DisplayPlots { get; set; }
+        public string ClearOldResults { get; set; } = string.Empty;
+        public string CompactProtocol { get; set; } = string.Empty;
+        public string DisplayPlots { get; set; } = string.Empty;
         public string FeatureListName { get; set; } = string.Empty;
-        public bool MotionPlanning { get; set; }
+        public string MotionPlanning { get; set; } = string.Empty;
         public string NaviMode { get; set; } = string.Empty;
-        public bool PdfExport { get; set; }
-        public bool PresentationProtocol { get; set; }
-        public bool Printer { get; set; }
-        public bool PrintPlots { get; set; }
+        public string PdfExport { get; set; } = string.Empty;
+        public string PresentationProtocol { get; set; } = string.Empty;
+        public string Printer { get; set; } = string.Empty;
+        public string PrintPlots { get; set; } = string.Empty;
         public string RunMode { get; set; } = string.Empty;
-        public int Speed { get; set; }
+        public string Speed { get; set; } = string.Empty;
     }
 }

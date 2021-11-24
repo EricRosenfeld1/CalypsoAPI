@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CalypsoAPI.Core.Models
+﻿namespace CalypsoAPI.Core.Models
 {
     public class MeasurementInfo
     {
@@ -17,7 +11,7 @@ namespace CalypsoAPI.Core.Models
 
         public string ChrFilePath { get; set; } = string.Empty;
         public string FetFilePath { get; set; } = string.Empty;
-        public string HdrFilePath { get; set; }
+        public string HdrFilePath { get; set; } = string.Empty;
 
         public string MeasurementPlanFileName { get; set; } = string.Empty;
     }
