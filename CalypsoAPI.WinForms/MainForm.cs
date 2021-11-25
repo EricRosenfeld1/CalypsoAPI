@@ -1,21 +1,34 @@
 ﻿using CalypsoAPI.Core;
 using CalypsoAPI.Core.Events;
+using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace CalypsoAPI.WinForms
 {
     public partial class MainForm : Form
     {
+        private ApiConfiguration apiConfiguration;
+        private Calypso api;
         public MainForm()
         {
             InitializeComponent();
+            try
+            {
+                apiConfiguration = new ApiConfiguration();
 
-            var api = new Calypso(new ApiConfiguration(@"C:\Users\Public\Documents\Zeiss\CMMObserver"));
-            api.Initialize();
+                api = new Calypso()
+                    .Configure(apiConfiguration)
+                    .Initialize();
 
-            api.CmmStateChanged += Api_CmmStateChanged;
-            api.MeasurementInfoChanged += Api_MeasurementInfoChanged;
-            api.MeasurementPlanInfoChanged += Api_MeasurementPlanInfoChanged;
+                api.CmmStateChanged += Api_CmmStateChanged;
+                api.MeasurementInfoChanged += Api_MeasurementInfoChanged;
+                api.MeasurementPlanInfoChanged += Api_MeasurementPlanInfoChanged;
+            } catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
         }
 
 
@@ -57,6 +70,27 @@ namespace CalypsoAPI.WinForms
         private void Api_CmmStateChanged(object sender, CmmStateChangedEventArgs e)
         {
             lblStatus.Text = e.Status.ToString();
+        }
+
+        private void button1_Click(object sender, System.EventArgs e)
+        {
+            var dialog = new FolderBrowserDialog();
+            dialog.Description = "Select CMMObserver path...";
+        }
+
+        private void richTextBox2_TextChanged(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void richTextBox1_TextChanged(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, System.EventArgs e)
+        {
+            api.Initialize();
         }
     }
 }
