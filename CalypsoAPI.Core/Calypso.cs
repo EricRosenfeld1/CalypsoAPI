@@ -5,56 +5,61 @@ using System.IO;
 
 namespace CalypsoAPI.Core
 {
-    public class Calypso
+    public class Calypso : IDisposable
     {
-        private readonly ApiConfiguration _config;
         private StateManager _stateManager;
         private MessageForm _messageForm;
 
-        public event EventHandler<CmmStateChangedEventArgs> CmmStateChanged;
-        public event EventHandler<MeasurementInfoEventArgs> MeasurementInfoChanged;
-        public event EventHandler<MeasurementPlanInfoEventArgs> MeasurementPlanInfoChanged;
+        public event EventHandler<MeasurementStartEventArgs> MeasurementStarted;
+        public event EventHandler<MeasurementFinishEventArgs> MeasurementFinished;
+        public event EventHandler MeasurementStopped;
+        public event EventHandler MeasurementPaused;
+        public event EventHandler MeasurementContinued;
+        public event EventHandler MeasurementError;
 
+        public event EventHandler<ApiExceptionEventArgs> ApiException;
 
-        /// <summary>
-        /// Information of the current measurement plan.
-        /// </summary>
-        /// <remarks>Is <see langword="null"/> if CMM Observer file does not exist</remarks>
-        public MeasurementPlanInfo MeasurementPlanInfo { get; private set; }
-
-        /// <summary>
-        /// Information of the current measurement.
-        /// </summary>
-        /// <remarks>Is <see langword="null"/> if CMM Observer file does not exist</remarks>
-        public MeasurementInfo MeasurementInfo { get; private set; }
+        public ApiConfiguration Configuration {get; private set;}
+        public CmmState State { get; private set; }
 
         /// <summary>
-        /// Current state of the CMM.
+        /// Initialize the Calypso Api client. Make sure to configure the API beforehand.
         /// </summary>
-        public Status CMMStatus { get; private set; }
-
-        /// <summary>
-        /// Calpyso API Client.
-        /// </summary>
-        /// <param name="configuration"></param>
-        public Calypso(ApiConfiguration configuration)
+        /// <exception cref="DirectoryNotFoundException"/>
+        /// <exception cref="Exception"/>
+        public Calypso Initialize()
         {
-            _config = configuration;
-        }
+            if (Configuration == null)
+                throw new Exception("Api is not configured.");
 
-        /// <summary>
-        /// Initialize the Calypso Api client.
-        /// </summary>
-        /// <exception cref="DirectoryNotFoundException"></exception>
-        public void Initialize()
-        {
-            if (!Directory.Exists(_config.CMMObserverFolderPath))
-                throw new DirectoryNotFoundException("Observer directory does not exist.");
+            if (!Directory.Exists(Configuration.CMMObserverFolderPath))
+                throw new DirectoryNotFoundException("CMMObserver directory does not exist.");
 
             _stateManager = new StateManager();
             _messageForm = new MessageForm();
             _messageForm.CmmStateChanged += _messageForm_CMMStateChanged;
             _messageForm.Show();
+
+            return this;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <exception cref="DirectoryNotFoundException"/>
+        public Calypso Configure(ApiConfiguration configuration)
+        {
+            if (!Directory.Exists(configuration.CMMObserverFolderPath))
+                throw new DirectoryNotFoundException("CMMObserver directory does not exist.");
+
+            if (configuration.CopyChrFileAfterReading)
+                if (configuration.ChrDestinationFolderPath == null || !Directory.Exists(configuration.ChrDestinationFolderPath))
+                    throw new DirectoryNotFoundException("Chr directory does not exist.");
+
+            Configuration = configuration;
+
+            return this;
         }
 
         /// <summary>
@@ -65,83 +70,88 @@ namespace CalypsoAPI.Core
         /// <param name="e"></param>
         private async void _messageForm_CMMStateChanged(object sender, CmmStateChangedEventArgs e)
         {
-            var command = await _stateManager.GetCommandFileAsync(_config.CMMObserverFolderPath);
-            var observer = await _stateManager.GetObserverFileAsync(_config.CMMObserverFolderPath);
-
-            var measInfo = new MeasurementInfo();
-
-            switch (e.Status)
+            try
             {
-                case Status.Running:
-                    if (command.state == "set_cnc_start")
-                    {
-                        measInfo = new MeasurementInfo()
+                var command = await _stateManager.GetCommandFileAsync(Configuration.CMMObserverFolderPath);
+                var observer = await _stateManager.GetObserverFileAsync(Configuration.CMMObserverFolderPath);
+
+                var measInfo = new MeasurementInfo();
+
+                switch (e.Status)
+                {
+                    case Status.Running:
+                        if (command.state == "set_cnc_start")
                         {
-                            MeasurementPlanId = observer.planid,
-                            ControllerType = observer.controllertyp,
-                            DeviceGroup = observer.devicegroup,
-                            FirmwareRevision = observer.firmWareRevision,
-                            OperatorId = observer.operid,
-                            PartNumber = observer.partnbinc,
-                            MeasurementPlanFileName = command.planPath,
-                        };
+                            measInfo = new MeasurementInfo()
+                            {
+                                MeasurementPlanId = observer.planid,
+                                DeviceGroup = observer.devicegroup,
+                                OperatorId = observer.operid,
+                                PartNumber = observer.partnbinc,
+                                MeasurementPlanFileName = command.planPath,
+                            };
 
-                        var start = await _stateManager.GetStartFileAsync(command.planPath);
-                        var planInfo = new MeasurementPlanInfo()
-                        {
-                            BaseSystemName = start.baseSystemRealName,
-                            BaseSystemType = start.baseSystemType,
-                            ClearOldResults = start.clearOldRes,
-                            CompactProtocol = start.compactProtocol,
-                            DisplayPlots = start.displayPlots,
-                            FeatureListName = start.featureListName,
-                            FileName = start.nameOfFile,
-                            MotionPlanning = start.motionPlanning,
-                            NaviMode = start.naviMode,
-                            PdfExport = start.pdfExport,
-                            PresentationProtocol = start.presProtocol,
-                            Printer = start.printer,
-                            PrintPlots = start.printPlots,
-                            RunMode = start.runMode,
-                            Speed = start.speed
-                        };
+                            var start = await _stateManager.GetStartFileAsync(command.planPath);
+                            var planInfo = new MeasurementPlanInfo()
+                            {
+                                BaseSystemName = start.baseSystemRealName,
+                                BaseSystemType = start.baseSystemType,
+                                ClearOldResults = start.clearOldRes,
+                                CompactProtocol = start.compactProtocol,
+                                DisplayPlots = start.displayPlots,
+                                FeatureListName = start.featureListName,
+                                FileName = start.nameOfFile,
+                                MotionPlanning = start.motionPlanning,
+                                NaviMode = start.naviMode,
+                                PdfExport = start.pdfExport,
+                                PresentationProtocol = start.presProtocol,
+                                Printer = start.printer,
+                                PrintPlots = start.printPlots,
+                                RunMode = start.runMode,
+                                Speed = start.speed
+                            };
 
-                        MeasurementInfo = measInfo;
-                        MeasurementInfoChanged?.Invoke(this, new MeasurementInfoEventArgs() { MeasurementInfo = measInfo });
 
-                        MeasurementPlanInfo = planInfo;
-                        MeasurementPlanInfoChanged?.Invoke(this, new MeasurementPlanInfoEventArgs() { MeasurementPlanInfo = planInfo });
-                    }
-                    break;
+                        }
+                        break;
 
-                case Status.Finished:
-                    measInfo = new MeasurementInfo()
-                    {
-                        MeasurementPlanId = observer.planid,
-                        ControllerType = observer.controllertyp,
-                        DeviceGroup = observer.devicegroup,
-                        FirmwareRevision = observer.firmWareRevision,
-                        OperatorId = observer.operid,
-                        PartNumber = observer.partnbinc,
-                        ChrFilePath = command.chrPath,
-                        HdrFilePath = command.hdrPath,
-                        FetFilePath = command.fetPath
-                    };
+                    case Status.Finished:
 
-                    MeasurementInfo = measInfo;
-                    MeasurementInfoChanged?.Invoke(this, new MeasurementInfoEventArgs() { MeasurementInfo = measInfo });
-                    break;
+                        break;
 
-                case Status.Paused:
-                case Status.Stopped:
-                case Status.Exception:
-                default:
-                    break;
+
+                    default:
+                        break;
+                }
+
+
+            } 
+            catch (Exception ex)
+            {
+                HandleException(ex);
             }
-
-            CMMStatus = e.Status;
-            CmmStateChanged?.Invoke(this, new CmmStateChangedEventArgs() { Status = e.Status });
+            
         }
+
+        public void Dispose()
+        {
+            _messageForm.Close();
+            _messageForm.CmmStateChanged -= _messageForm_CMMStateChanged;
+            _messageForm?.Dispose();            
+        }
+
+        private void HandleException(Exception ex)
+        {
+            _messageForm.Close();
+            _messageForm.Dispose();
+
+            MeasurementInfo = new MeasurementInfo();
+            MeasurementPlanInfo = new MeasurementPlanInfo();
+            CMMStatus = Status.Exception;
+
+            ApiException?.Invoke(this, new ApiExceptionEventArgs() { Exception = ex });
+        }
+
     }
 
 

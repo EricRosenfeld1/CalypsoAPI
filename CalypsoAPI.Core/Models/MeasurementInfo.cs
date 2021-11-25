@@ -1,18 +1,57 @@
-﻿namespace CalypsoAPI.Core.Models
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace CalypsoAPI.Core.Models
 {
-    public class MeasurementInfo
+    public class MeasurementInfo : INotifyPropertyChanged
     {
-        public string MeasurementPlanId { get; set; } = string.Empty;
-        public string PartNumber { get; set; } = string.Empty;
-        public string OperatorId { get; set; } = string.Empty;
-        public string ControllerType { get; set; } = string.Empty;
-        public string DeviceGroup { get; set; } = string.Empty;
-        public string FirmwareRevision { get; set; } = string.Empty;
+        private string measurementPlanId = string.Empty;
+        public string MeasurementPlanId 
+        {
+            get => measurementPlanId; 
+            set => SetField(ref measurementPlanId, value); 
+        }
 
-        public string ChrFilePath { get; set; } = string.Empty;
-        public string FetFilePath { get; set; } = string.Empty;
-        public string HdrFilePath { get; set; } = string.Empty;
+        private string measurementPlanFileName = string.Empty;
+        public string MeasurementPlanFileName 
+        { 
+            get => measurementPlanFileName; 
+            set => SetField(ref measurementPlanFileName, value); 
+        }
 
-        public string MeasurementPlanFileName { get; set; } = string.Empty;
+        public string partNumber = string.Empty;
+        public string PartNumber 
+        { 
+            get => partNumber; 
+            set => SetField(ref partNumber, value); 
+        }
+
+        private string operatorId = string.Empty;
+        public string OperatorId 
+        { 
+            get => operatorId; 
+            set => SetField(ref operatorId, value); 
+        }
+
+        private string deviceGroup = string.Empty;
+        public string DeviceGroup
+        { 
+            get => deviceGroup; 
+            set => SetField(ref deviceGroup, value); 
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged; 
+        
+        protected void OnPropertyChanged(string propertyName)
+    => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
     }
 }

@@ -22,7 +22,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\CalypsoAPI.Core.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <IsPackable>true</IsPackable>
@@ -65,9 +66,11 @@
     <Compile Include="ApiConfiguration.cs" />
     <Compile Include="Calypso.cs" />
     <Compile Include="Events\ApiEventArgs.cs" />
+    <Compile Include="Models\CmmState.cs" />
     <Compile Include="Models\CommandFile.cs" />
     <Compile Include="Models\MeasurementInfo.cs" />
     <Compile Include="Models\MeasurementPlanInfo.cs" />
+    <Compile Include="Models\MeasurementResult.cs" />
     <Compile Include="Models\StartFile.cs" />
     <Compile Include="StatusEnum.cs" />
     <Compile Include="MessageForm.cs">
