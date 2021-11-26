@@ -1,8 +1,11 @@
-﻿using CalypsoAPI.Core.Models;
+﻿using CalypsoAPI.Core.Models.Files;
+using CalypsoAPI.Core.Models.State;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CalypsoAPI.Core
@@ -39,6 +42,16 @@ namespace CalypsoAPI.Core
             return ParseStartFile(data);
         }
 
+        internal static async Task<MeasurementResult> GetMeasurementResultAsync(string chrFilePath)
+        {
+            var path = Path.Combine(chrFilePath);
+            string data;
+            using (var reader = File.OpenText(path))
+                data = await reader.ReadToEndAsync();
+
+            return ParseChrFile(data);
+        }
+
         private static ObserverFile ParseObserverFile(string data)
         {
             var observerFile = new ObserverFile();
@@ -50,7 +63,8 @@ namespace CalypsoAPI.Core
                 {
                     try
                     {
-                        observerFile.GetType().GetProperty(tokens[0].Trim()).SetValue(observerFile, tokens[1].Trim());
+
+                        observerFile.GetType().GetProperty(tokens[0].Trim(), BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static).SetValue(observerFile, tokens[1].Trim());
                     }
                     catch (Exception) { }
                 }
@@ -63,7 +77,9 @@ namespace CalypsoAPI.Core
         {
             var commandFile = new CommandFile();
             var tokens = data.Split(new string[] { "\t" }, StringSplitOptions.None);
-            if (tokens.Length > 0)
+            if (tokens.Length == 0)
+                return null;
+            
                 commandFile.state = tokens[0].Trim();
             if (commandFile.state == "set_cnc_end" && tokens.Length == 5)
             {
@@ -91,13 +107,50 @@ namespace CalypsoAPI.Core
                 {
                     try
                     {
-                        startFile.GetType().GetProperty(tokens[0].Trim()).SetValue(startFile, tokens[1].Trim());
+                        startFile.GetType().GetProperty(tokens[0].Trim(), BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static).SetValue(startFile, tokens[1].Trim());
                     }
                     catch (Exception) { }
                 }
             }
 
             return startFile;
+        }
+
+        private static MeasurementResult ParseChrFile(string data)
+        {
+            var chr = new MeasurementResult();
+            chr.ChrFile = data;
+            chr.Measurements = new List<Measurement>();
+
+            List<string> lines = data.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();
+
+            var columns = lines[0].Split('\t').ToList();
+            chr.ChrTable = new DataTable();
+            foreach (var column in columns)
+                chr.ChrTable.Columns.Add(column);
+
+            foreach(var line in lines.Skip(1))
+            {
+                if (line.Contains("END"))
+                    break;
+
+                var values = line.Split('\t');
+                chr.ChrTable.Rows.Add(values);
+                chr.Measurements.Add(new Measurement()
+                {
+                    Id = values[2],
+                    Type = values[3],
+                    Actual = values[5],
+                    Nominal = values[6],
+                    UpperTolerance = values[7],
+                    LowerTolerance = values[8],
+                    Deviation = values[9],
+                    Exceed = values[10],
+                    FeatureId = values[12],
+                    GroupName = values[23]
+                });
+            }
+            return chr;
         }
     }
 }

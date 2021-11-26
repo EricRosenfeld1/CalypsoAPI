@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace CalypsoAPI.Core.Models
+namespace CalypsoAPI.Core.Models.State
 {
     public class MeasurementInfo 
     {

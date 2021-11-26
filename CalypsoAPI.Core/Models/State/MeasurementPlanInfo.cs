@@ -1,4 +1,4 @@
-﻿namespace CalypsoAPI.Core.Models
+﻿namespace CalypsoAPI.Core.Models.State
 {
     public class MeasurementPlanInfo
     {
