@@ -82,7 +82,6 @@
     </Compile>
     <Compile Include="Models\Files\ObserverFile.cs" />
     <Compile Include="CalypsoFileHelper.cs" />
-    <Compile Include="UILogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MessageForm.resx">
