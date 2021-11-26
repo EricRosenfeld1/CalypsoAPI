@@ -7,61 +7,39 @@ using System.Threading.Tasks;
 
 namespace CalypsoAPI.Core
 {
-    internal class StateManager
+    static internal class CalypsoFileHelper
     {
-        internal async Task<ObserverFile> GetObserverFileAsync(string observerPath)
+        internal static async Task<ObserverFile> GetObserverFileAsync(string observerPath)
         {
             var path = Path.Combine(observerPath, "observerFile.txt");
-            if (File.Exists(path))
-            {
-                string data;
-                using (var reader = File.OpenText(path))
-                    data = await reader.ReadToEndAsync();
+            string data;
+            using (var reader = File.OpenText(path))
+                data = await reader.ReadToEndAsync();
 
-                if (data.Length > 0)
-                    return ParseObserverFile(data);
-                else
-                    return null;
-            }
-
-            return null;
+            return ParseObserverFile(data);
         }
 
-        internal async Task<CommandFile> GetCommandFileAsync(string observerPath)
+        internal static async Task<CommandFile> GetCommandFileAsync(string observerPath)
         {
             var path = Path.Combine(observerPath, "observerCommandFile.txt");
-            if (File.Exists(path))
-            {
-                string data;
-                using (var reader = File.OpenText(path))
-                    data = await reader.ReadToEndAsync();
+            string data;
+            using (var reader = File.OpenText(path))
+            data = await reader.ReadToEndAsync();
 
-                if (data.Length > 0)
-                    return ParseCommandFile(data);
-                else
-                    return null;
-            }
-            return null;
+            return ParseCommandFile(data);
         }
 
-        internal async Task<StartFile> GetStartFileAsync(string planPath)
+        internal static async Task<StartFile> GetStartFileAsync(string planPath)
         {
             var path = Path.Combine(planPath, "startfile");
-            if (File.Exists(path))
-            {
-                string data;
-                using (var reader = File.OpenText(path))
-                    data = await reader.ReadToEndAsync();
+            string data;
+            using (var reader = File.OpenText(path))
+            data = await reader.ReadToEndAsync();
 
-                if (data.Length > 0)
-                    return ParseStartFile(data);
-                else
-                    return null;
-            }
-            return null;
+            return ParseStartFile(data);
         }
 
-        private ObserverFile ParseObserverFile(string data)
+        private static ObserverFile ParseObserverFile(string data)
         {
             var observerFile = new ObserverFile();
             List<string> lines = data.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();
@@ -81,7 +59,7 @@ namespace CalypsoAPI.Core
             return observerFile;
         }
 
-        private CommandFile ParseCommandFile(string data)
+        private static CommandFile ParseCommandFile(string data)
         {
             var commandFile = new CommandFile();
             var tokens = data.Split(new string[] { "\t" }, StringSplitOptions.None);
@@ -102,7 +80,7 @@ namespace CalypsoAPI.Core
             return commandFile;
         }
 
-        private StartFile ParseStartFile(string data)
+        private static StartFile ParseStartFile(string data)
         {
             var startFile = new StartFile();
             List<string> lines = data.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();

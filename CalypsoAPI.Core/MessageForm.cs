@@ -85,8 +85,6 @@ namespace CalypsoAPI.Core
         {
             var value = m.Msg;
 
-            OnCmmStateChanged(new CmmStateChangedEventArgs() { Status = Status.Exception });
-
             if (_messages.ContainsKey(value))
             {
                 var message = _messages[value];

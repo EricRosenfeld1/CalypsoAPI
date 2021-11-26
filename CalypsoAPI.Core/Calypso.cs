@@ -7,8 +7,7 @@ namespace CalypsoAPI.Core
 {
     public class Calypso : IDisposable
     {
-        private StateManager _stateManager;
-        private MessageForm _messageForm;
+        private MessageForm _messageForm = new MessageForm();
 
         public event EventHandler<MeasurementStartEventArgs> MeasurementStarted;
         public event EventHandler<MeasurementFinishEventArgs> MeasurementFinished;
@@ -19,80 +18,84 @@ namespace CalypsoAPI.Core
 
         public event EventHandler<ApiExceptionEventArgs> ApiException;
 
-        public ApiConfiguration Configuration {get; private set;}
-        public CmmState State { get; private set; }
+        public CalypsoConfiguration Configuration { get; private set;}
 
         /// <summary>
-        /// Initialize the Calypso Api client. Make sure to configure the API beforehand.
+        /// Current state of the CMM
         /// </summary>
-        /// <exception cref="DirectoryNotFoundException"/>
-        /// <exception cref="Exception"/>
-        public Calypso Initialize()
-        {
-            if (Configuration == null)
-                throw new Exception("Api is not configured.");
-
-            if (!Directory.Exists(Configuration.CMMObserverFolderPath))
-                throw new DirectoryNotFoundException("CMMObserver directory does not exist.");
-
-            _stateManager = new StateManager();
-            _messageForm = new MessageForm();
-            _messageForm.CmmStateChanged += _messageForm_CMMStateChanged;
-            _messageForm.Show();
-
-            return this;
-        }
+        public CmmState State { get; private set; } = new CmmState();
 
         /// <summary>
-        /// 
+        /// Default constructor
         /// </summary>
         /// <param name="configuration"></param>
-        /// <exception cref="DirectoryNotFoundException"/>
-        public Calypso Configure(ApiConfiguration configuration)
+        public Calypso(CalypsoConfiguration configuration)
         {
-            if (!Directory.Exists(configuration.CMMObserverFolderPath))
-                throw new DirectoryNotFoundException("CMMObserver directory does not exist.");
-
-            if (configuration.CopyChrFileAfterReading)
-                if (configuration.ChrDestinationFolderPath == null || !Directory.Exists(configuration.ChrDestinationFolderPath))
-                    throw new DirectoryNotFoundException("Chr directory does not exist.");
-
             Configuration = configuration;
-
-            return this;
         }
 
         /// <summary>
-        /// Catch WndProc messages send by calypso.
-        /// Messages are sent when the state of the CMM changes.
+        /// Start the calypso api after verifying the configuration
+        /// </summary>
+        /// <exception cref="DirectoryNotFoundException">Some of the paths in the configuration are missing.</exception>
+        /// <exception cref="Exception">If configuration is null</exception>
+        public void Start()
+        {
+            if (Configuration == null)
+                throw new Exception("No configuration found!");
+
+            if (!Directory.Exists(Configuration.CMMObserverFolderPath))
+                throw new DirectoryNotFoundException("Observer directory does not exist!");
+
+            if (Configuration.CopyChrFileAfterReading)
+                if (!Directory.Exists(Configuration.ChrDestinationFolderPath))
+                    throw new DirectoryNotFoundException("Chr destination folder does not exist!");
+
+            _messageForm.CmmStateChanged += OnCmmStateChanged;
+            _messageForm.Show();
+        }
+
+        /// <summary>
+        /// Stop the calypso api
+        /// </summary>
+        public void Stop()
+        {
+            _messageForm.CmmStateChanged -= OnCmmStateChanged;
+        }
+
+        public void Configure(CalypsoConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public void Dispose()
+        {
+            _messageForm.CmmStateChanged -= OnCmmStateChanged;
+            _messageForm.Close();
+            _messageForm?.Dispose();
+        }
+
+        /// <summary>
+        /// Catch WndProc messages send by calypso
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void _messageForm_CMMStateChanged(object sender, CmmStateChangedEventArgs e)
+        private async void OnCmmStateChanged(object sender, CmmStateChangedEventArgs e)
         {
             try
             {
-                var command = await _stateManager.GetCommandFileAsync(Configuration.CMMObserverFolderPath);
-                var observer = await _stateManager.GetObserverFileAsync(Configuration.CMMObserverFolderPath);
+                State.Status = e.Status;
 
-                var measInfo = new MeasurementInfo();
+                var command = await CalypsoFileHelper.GetCommandFileAsync(Configuration.CMMObserverFolderPath);
+                var observer = await CalypsoFileHelper.GetObserverFileAsync(Configuration.CMMObserverFolderPath);
 
                 switch (e.Status)
                 {
                     case Status.Running:
                         if (command.state == "set_cnc_start")
                         {
-                            measInfo = new MeasurementInfo()
-                            {
-                                MeasurementPlanId = observer.planid,
-                                DeviceGroup = observer.devicegroup,
-                                OperatorId = observer.operid,
-                                PartNumber = observer.partnbinc,
-                                MeasurementPlanFileName = command.planPath,
-                            };
-
-                            var start = await _stateManager.GetStartFileAsync(command.planPath);
-                            var planInfo = new MeasurementPlanInfo()
+                            var start = await CalypsoFileHelper.GetStartFileAsync(command.planPath);
+                            State.MeasurementPlan = new MeasurementPlanInfo()
                             {
                                 BaseSystemName = start.baseSystemRealName,
                                 BaseSystemType = start.baseSystemType,
@@ -108,23 +111,47 @@ namespace CalypsoAPI.Core
                                 Printer = start.printer,
                                 PrintPlots = start.printPlots,
                                 RunMode = start.runMode,
-                                Speed = start.speed
+                                Speed = start.speed,
+                                Date = start.date,
+                                Time = start.time,
+                                OperatorId = start.operid,
+                                PartNumber = start.partnbinc
                             };
-
-
-                        }
+                            MeasurementStarted?.Invoke(this, new MeasurementStartEventArgs() { MeasurementPlan = State.MeasurementPlan });
+                        } 
+                        else if(command.state == "set_cnc_cont")
+                            MeasurementContinued?.Invoke(this, EventArgs.Empty);                   
                         break;
 
                     case Status.Finished:
-
+                        if(State.MeasurementPlan != null)
+                        {
+                            var info = new MeasurementInfo()
+                            {
+                                ChrPath = command.chrPath,
+                                HdrPath = command.hdrPath,
+                                FetPath = command.fetPath,
+                                ToleranceState = command.toleranceState
+                            };
+                            MeasurementFinished?.Invoke(this, new MeasurementFinishEventArgs() { MeasurementInfo = info, MeasurementPlan = State.MeasurementPlan, MeasurementResult = null });
+                        }                   
                         break;
 
+                    case Status.Stopped:
+                        MeasurementStopped?.Invoke(sender, EventArgs.Empty);
+                        break;
+
+                    case Status.Paused:
+                        MeasurementPaused?.Invoke(this, EventArgs.Empty);
+                        break;
+
+                    case Status.Exception:
+                        MeasurementError?.Invoke(this, EventArgs.Empty);
+                        break;
 
                     default:
                         break;
                 }
-
-
             } 
             catch (Exception ex)
             {
@@ -133,25 +160,11 @@ namespace CalypsoAPI.Core
             
         }
 
-        public void Dispose()
-        {
-            _messageForm.Close();
-            _messageForm.CmmStateChanged -= _messageForm_CMMStateChanged;
-            _messageForm?.Dispose();            
-        }
-
         private void HandleException(Exception ex)
         {
-            _messageForm.Close();
-            _messageForm.Dispose();
-
-            MeasurementInfo = new MeasurementInfo();
-            MeasurementPlanInfo = new MeasurementPlanInfo();
-            CMMStatus = Status.Exception;
-
+            Dispose();
             ApiException?.Invoke(this, new ApiExceptionEventArgs() { Exception = ex });
         }
-
     }
 
 
