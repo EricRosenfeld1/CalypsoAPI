@@ -68,19 +68,20 @@
     <Compile Include="CalypsoConfiguration.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Calypso.cs" />
-    <Compile Include="Events\ApiEventArgs.cs" />
-    <Compile Include="Models\CmmState.cs" />
-    <Compile Include="Models\CommandFile.cs" />
-    <Compile Include="Models\MeasurementInfo.cs" />
-    <Compile Include="Models\MeasurementPlanInfo.cs" />
-    <Compile Include="Models\MeasurementResult.cs" />
-    <Compile Include="Models\StartFile.cs" />
+    <Compile Include="Events\CalypsoEventArgs.cs" />
+    <Compile Include="Models\State\Measurement.cs" />
+    <Compile Include="Models\State\MeasurementResult.cs" />
+    <Compile Include="Models\State\CmmState.cs" />
+    <Compile Include="Models\Files\CommandFile.cs" />
+    <Compile Include="Models\State\MeasurementInfo.cs" />
+    <Compile Include="Models\State\MeasurementPlanInfo.cs" />
+    <Compile Include="Models\Files\StartFile.cs" />
     <Compile Include="StatusEnum.cs" />
     <Compile Include="MessageForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Models\ObserverFile.cs" />
-    <Compile Include="StateManager.cs" />
+    <Compile Include="Models\Files\ObserverFile.cs" />
+    <Compile Include="CalypsoFileHelper.cs" />
     <Compile Include="UILogger.cs" />
   </ItemGroup>
   <ItemGroup>

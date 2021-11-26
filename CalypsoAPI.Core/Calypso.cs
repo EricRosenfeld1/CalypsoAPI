@@ -1,5 +1,5 @@
 ﻿using CalypsoAPI.Core.Events;
-using CalypsoAPI.Core.Models;
+using CalypsoAPI.Core.Models.State;
 using System;
 using System.IO;
 
@@ -21,7 +21,7 @@ namespace CalypsoAPI.Core
         public CalypsoConfiguration Configuration { get; private set;}
 
         /// <summary>
-        /// Current state of the CMM
+        /// Information about state of the measuring machine, measurement plan and results
         /// </summary>
         public CmmState State { get; private set; } = new CmmState();
 
@@ -93,7 +93,7 @@ namespace CalypsoAPI.Core
                 {
                     case Status.Running:
                         if (command.state == "set_cnc_start")
-                        {
+                        { 
                             var start = await CalypsoFileHelper.GetStartFileAsync(command.planPath);
                             State.MeasurementPlan = new MeasurementPlanInfo()
                             {
@@ -133,7 +133,12 @@ namespace CalypsoAPI.Core
                                 FetPath = command.fetPath,
                                 ToleranceState = command.toleranceState
                             };
-                            MeasurementFinished?.Invoke(this, new MeasurementFinishEventArgs() { MeasurementInfo = info, MeasurementPlan = State.MeasurementPlan, MeasurementResult = null });
+                            MeasurementFinished?.Invoke(this, new MeasurementFinishEventArgs()
+                            {
+                                MeasurementInfo = info,
+                                MeasurementPlan = State.MeasurementPlan,
+                                MeasurementResult = await CalypsoFileHelper.GetMeasurementResultAsync(command.chrPath)
+                            });
                         }                   
                         break;
 
