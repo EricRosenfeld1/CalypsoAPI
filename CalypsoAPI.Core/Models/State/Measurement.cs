@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CalypsoAPI.Core.Models.State
 {
+    /// <summary>
+    /// Common measurement model
+    /// </summary>
     public class Measurement
     {
         public string Id { get; set; }

@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace CalypsoAPI.Core
 {
+    /// <summary>
+    /// Helper class to parse calypso files
+    /// </summary>
     static internal class CalypsoFileHelper
     {
         internal static async Task<ObserverFile> GetObserverFileAsync(string observerPath)

@@ -1,5 +1,8 @@
 ﻿namespace CalypsoAPI.Core.Models.State
 {
+    /// <summary>
+    /// Measurement plan details
+    /// </summary>
     public class MeasurementPlanInfo
     {
         public string FileName { get; set; } = string.Empty;

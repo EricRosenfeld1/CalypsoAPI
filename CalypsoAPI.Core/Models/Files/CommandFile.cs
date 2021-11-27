@@ -1,5 +1,8 @@
 ﻿namespace CalypsoAPI.Core.Models.Files
 {
+     /// <summary>
+     /// Model for observerCommandFile.txt
+     /// </summary>
     internal class CommandFile
     {
         internal string state { get; set; }

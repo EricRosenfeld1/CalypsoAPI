@@ -18,7 +18,7 @@ namespace CalypsoAPI.Core.Events
         public MeasurementPlanInfo MeasurementPlanInfo { get; set; }
     }
 
-    public class ApiExceptionEventArgs : EventArgs
+    public class CalypsoExceptionEventArgs : EventArgs
     {
         public Exception Exception { get; set; }
     }

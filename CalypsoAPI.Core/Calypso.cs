@@ -16,7 +16,12 @@ namespace CalypsoAPI.Core
         public event EventHandler MeasurementContinued;
         public event EventHandler MeasurementError;
 
-        public event EventHandler<ApiExceptionEventArgs> ApiException;
+        public event EventHandler<CalypsoExceptionEventArgs> CalypsoException;
+
+        /// <summary>
+        /// Is calypso api running
+        /// </summary>
+        public bool IsRunning { get; private set; }
 
         public CalypsoConfiguration Configuration { get; private set;}
 
@@ -26,7 +31,7 @@ namespace CalypsoAPI.Core
         public CmmState State { get; private set; } = new CmmState();
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor for calypso api
         /// </summary>
         /// <param name="configuration"></param>
         public Calypso(CalypsoConfiguration configuration)
@@ -51,6 +56,8 @@ namespace CalypsoAPI.Core
                 if (!Directory.Exists(Configuration.ChrDestinationFolderPath))
                     throw new DirectoryNotFoundException("Chr destination folder does not exist!");
 
+            IsRunning = true;
+
             _messageForm.CmmStateChanged += OnCmmStateChanged;
             _messageForm.Show();
         }
@@ -61,6 +68,7 @@ namespace CalypsoAPI.Core
         public void Stop()
         {
             _messageForm.CmmStateChanged -= OnCmmStateChanged;
+            IsRunning = false;
         }
 
         public void Configure(CalypsoConfiguration configuration)
@@ -70,9 +78,9 @@ namespace CalypsoAPI.Core
 
         public void Dispose()
         {
+            IsRunning = false;
             _messageForm.CmmStateChanged -= OnCmmStateChanged;
             _messageForm.Close();
-            _messageForm?.Dispose();
         }
 
         /// <summary>
@@ -165,10 +173,14 @@ namespace CalypsoAPI.Core
             
         }
 
+        /// <summary>
+        /// Handle exceptions and raise the exception event
+        /// </summary>
+        /// <param name="ex"></param>
         private void HandleException(Exception ex)
         {
             Dispose();
-            ApiException?.Invoke(this, new ApiExceptionEventArgs() { Exception = ex });
+            CalypsoException?.Invoke(this, new CalypsoExceptionEventArgs() { Exception = ex });
         }
     }
 

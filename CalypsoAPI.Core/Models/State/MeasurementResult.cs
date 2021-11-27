@@ -3,6 +3,9 @@ using System.Data;
 
 namespace CalypsoAPI.Core.Models.State
 {
+    /// <summary>
+    /// Results of the measurement
+    /// </summary>
     public class MeasurementResult
     {
         /// <summary>

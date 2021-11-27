@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CalypsoAPI.Core.Models.State
 {
+    /// <summary>
+    /// Measuring machine state
+    /// </summary>
     public class CmmState : INotifyPropertyChanged
     {
         private Status status = Status.Stopped;

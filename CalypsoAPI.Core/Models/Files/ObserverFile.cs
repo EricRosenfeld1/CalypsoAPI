@@ -1,5 +1,8 @@
 ﻿namespace CalypsoAPI.Core.Models.Files
 {
+    /// <summary>
+    /// Model for observerFile.txt
+    /// </summary>
     internal class ObserverFile
     {
         internal string planid { get; set; }

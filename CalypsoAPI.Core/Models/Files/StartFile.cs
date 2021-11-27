@@ -1,5 +1,8 @@
 ﻿namespace CalypsoAPI.Core.Models.Files
 {
+    /// <summary>
+    /// Model for startfile (located in measurement plan folder)
+    /// </summary>
     internal class StartFile
     {
         internal string baseSystemRealName { get; set; }
