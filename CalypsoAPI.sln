@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalypsoAPI.Core", "CalypsoA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalypsoAPI.Test", "CalypsoAPI.Test\CalypsoAPI.Test.csproj", "{40EED5B4-5F42-4151-8C9B-A9C7E1B648EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalypsoAPI.Rest", "CalypsoAPI.Rest\CalypsoAPI.Rest.csproj", "{CF5AF46F-2353-4CA5-9B61-B6922EB97F1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalypsoAPI.Rest", "CalypsoAPI.Rest\CalypsoAPI.Rest.csproj", "{CF5AF46F-2353-4CA5-9B61-B6922EB97F1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

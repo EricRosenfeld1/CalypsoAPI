@@ -1,7 +1,9 @@
 ﻿using CalypsoAPI.Core.Events;
 using CalypsoAPI.Core.Models.State;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace CalypsoAPI.Core
 {
@@ -23,7 +25,9 @@ namespace CalypsoAPI.Core
         /// </summary>
         public bool IsRunning { get; private set; }
 
-        public CalypsoConfiguration Configuration { get; private set;}
+        public CalypsoConfiguration Configuration { get; set;}
+
+        public List<IService> Services { get; set; } = new List<IService>();
 
         /// <summary>
         /// Information about state of the measuring machine, measurement plan and results
@@ -31,20 +35,11 @@ namespace CalypsoAPI.Core
         public CmmState State { get; private set; } = new CmmState();
 
         /// <summary>
-        /// Default constructor for calypso api
-        /// </summary>
-        /// <param name="configuration"></param>
-        public Calypso(CalypsoConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        /// <summary>
         /// Start the calypso api after verifying the configuration
         /// </summary>
         /// <exception cref="DirectoryNotFoundException">Some of the paths in the configuration are missing.</exception>
         /// <exception cref="Exception">If configuration is null</exception>
-        public void Start()
+        public async Task StartAsync()
         {
             if (Configuration == null)
                 throw new Exception("No configuration found!");
@@ -60,21 +55,42 @@ namespace CalypsoAPI.Core
 
             _messageForm.CmmStateChanged += OnCmmStateChanged;
             _messageForm.Show();
+
+            foreach(var service in Services)
+            {
+                try
+                {
+                    await service.StartAsync();
+                } 
+                catch (Exception ex)
+                {
+                    CalypsoException?.Invoke(this, new CalypsoExceptionEventArgs() { Exception = ex });
+                }
+            }
         }
 
         /// <summary>
         /// Stop the calypso api
         /// </summary>
-        public void Stop()
+        public async Task StopAsync()
         {
             _messageForm.CmmStateChanged -= OnCmmStateChanged;
+
+            foreach (var service in Services)
+            {
+                try
+                {
+                    await service.StopAsync();
+                }
+                catch (Exception ex)
+                {
+                    CalypsoException?.Invoke(this, new CalypsoExceptionEventArgs() { Exception = ex });
+                }
+            }
+
             IsRunning = false;
         }
 
-        public void Configure(CalypsoConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
 
         public void Dispose()
         {
