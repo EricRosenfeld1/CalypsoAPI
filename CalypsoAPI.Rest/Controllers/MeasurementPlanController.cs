@@ -1,30 +1,30 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CalypsoAPI.Core;
+using CalypsoAPI.Core.Models.State;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CalypsoAPI.Core;
-using CalypsoAPI.Core.Models.State;
 
 namespace CalypsoAPI.Rest.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
-    public class CalypsoController : ControllerBase
+    public class MeasurementPlanController : ControllerBase
     {
-        private Calypso _calypso;
+        private ICalypso _calypso;
 
-        public CalypsoController(Calypso calypso)
+        public MeasurementPlanController(ICalypso calypso)
         {
             _calypso = calypso;
         }
 
-        [HttpGet("measurements")]
+        [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-        public ActionResult<List<Measurement>> GetMeasurements()
+        public ActionResult<MeasurementPlanInfo> Get()
         {
             if (_calypso == null)
                 return StatusCode(503, "Calypso api not initialized.");
@@ -32,8 +32,7 @@ namespace CalypsoAPI.Rest.Controllers
             if (!_calypso.IsRunning)
                 return StatusCode(503, "Calypso api is not running.");
 
-            return Ok(_calypso.State.LatestMeasurementResults.Measurements);
+            return Ok(_calypso.State.MeasurementPlan);
         }
-
     }
 }

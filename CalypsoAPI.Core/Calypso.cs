@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CalypsoAPI.Core
 {
-    public class Calypso : IDisposable
+    public class Calypso : ICalypso
     {
         private MessageForm _messageForm = new MessageForm();
 
@@ -25,7 +25,7 @@ namespace CalypsoAPI.Core
         /// </summary>
         public bool IsRunning { get; private set; }
 
-        public CalypsoConfiguration Configuration { get; set;}
+        public CalypsoConfiguration Configuration { get; set; }
 
         public List<IService> Services { get; set; } = new List<IService>();
 
@@ -56,12 +56,12 @@ namespace CalypsoAPI.Core
             _messageForm.CmmStateChanged += OnCmmStateChanged;
             _messageForm.Show();
 
-            foreach(var service in Services)
+            foreach (var service in Services)
             {
                 try
                 {
                     await service.StartAsync();
-                } 
+                }
                 catch (Exception ex)
                 {
                     CalypsoException?.Invoke(this, new CalypsoExceptionEventArgs() { Exception = ex });
@@ -91,7 +91,6 @@ namespace CalypsoAPI.Core
             IsRunning = false;
         }
 
-
         public void Dispose()
         {
             IsRunning = false;
@@ -117,7 +116,7 @@ namespace CalypsoAPI.Core
                 {
                     case Status.Running:
                         if (command.state == "set_cnc_start")
-                        { 
+                        {
                             var start = await CalypsoFileHelper.GetStartFileAsync(command.planPath);
                             State.MeasurementPlan = new MeasurementPlanInfo()
                             {
@@ -142,13 +141,13 @@ namespace CalypsoAPI.Core
                                 PartNumber = start.partnbinc
                             };
                             MeasurementStarted?.Invoke(this, new MeasurementStartEventArgs() { MeasurementPlan = State.MeasurementPlan });
-                        } 
-                        else if(command.state == "set_cnc_cont")
-                            MeasurementContinued?.Invoke(this, EventArgs.Empty);                   
+                        }
+                        else if (command.state == "set_cnc_cont")
+                            MeasurementContinued?.Invoke(this, EventArgs.Empty);
                         break;
 
                     case Status.Finished:
-                        if(State.MeasurementPlan != null)
+                        if (State.MeasurementPlan != null)
                         {
                             var info = new MeasurementInfo()
                             {
@@ -163,7 +162,7 @@ namespace CalypsoAPI.Core
                                 MeasurementPlan = State.MeasurementPlan,
                                 MeasurementResult = await CalypsoFileHelper.GetMeasurementResultAsync(command.chrPath)
                             });
-                        }                   
+                        }
                         break;
 
                     case Status.Stopped:
@@ -181,12 +180,12 @@ namespace CalypsoAPI.Core
                     default:
                         break;
                 }
-            } 
+            }
             catch (Exception ex)
             {
                 HandleException(ex);
             }
-            
+
         }
 
         /// <summary>
@@ -199,6 +198,5 @@ namespace CalypsoAPI.Core
             CalypsoException?.Invoke(this, new CalypsoExceptionEventArgs() { Exception = ex });
         }
     }
-
 
 }
