@@ -35,11 +35,12 @@ namespace CalypsoAPI.Test
             WM_ZEISS_MDE_MSG_CNC_END = RegisterWindowMessage(nameof(ZEISS_MDE_MSG_CNC_END));
             WM_ZEISS_MDE_MSG_CNC_STOP = RegisterWindowMessage(nameof(ZEISS_MDE_MSG_CNC_STOP));
 
-            calypso = new Calypso();
-                //.Configure(configuration =>
-                //{
-                //    //configuration.CMMObserverFolderPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "files");
-                //});
+
+            calypso = new Calypso()          
+            .Configure(configuration =>
+            {
+                configuration.CMMObserverFolderPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "files");
+            });
 
             await calypso.Run();
 
