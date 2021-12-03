@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CalypsoAPI.Core
+namespace CalypsoAPI.Core.Interface
 {
     public interface ICalypso : IDisposable
     {

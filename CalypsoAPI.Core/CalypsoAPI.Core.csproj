@@ -76,8 +76,8 @@
     <Compile Include="Calypso.cs" />
     <Compile Include="Events\CalypsoEventArgs.cs" />
     <Compile Include="Extension.cs" />
-    <Compile Include="ICalypso.cs" />
-    <Compile Include="IService.cs" />
+    <Compile Include="Interface\ICalypso.cs" />
+    <Compile Include="Interface\IService.cs" />
     <Compile Include="Models\State\Measurement.cs" />
     <Compile Include="Models\State\MeasurementResult.cs" />
     <Compile Include="Models\State\CmmState.cs" />

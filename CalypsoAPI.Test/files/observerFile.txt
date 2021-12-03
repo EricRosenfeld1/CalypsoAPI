@@ -1,0 +1,18 @@
+planid	Test
+partnbinc	13
+dmeid	PRISMO_MASS
+dmesn	170450
+operid	Master
+dmeswv	6.4.24
+actualCharacteristic	INSP_TYPE
+actualFeature	Endposition
+actualProbeSensorType	VAST
+actualStylusSystem	T_62a
+actualStylus	4_-Y
+firmWareRevision	CMM NC-Kernel Rev.  V 28.04     
+Date Jan  9 2013  Time 09:04:03 
+controllertyp	C32Bit
+devicegroup	Prismo_170450
+observerStateCmm	ok
+observerStateCal	ok
+errorSubType	

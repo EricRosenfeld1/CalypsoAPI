@@ -1,4 +1,5 @@
 ﻿using CalypsoAPI.Core.Events;
+using CalypsoAPI.Core.Interface;
 using CalypsoAPI.Core.Models.State;
 using System;
 using System.Collections.Generic;
