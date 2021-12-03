@@ -2,12 +2,13 @@
 
 CalypsoAPI is a .NET library used to access data of Zeiss&copy; measuring machines using Calypso software.  The libray must be executed on the computer running CALYPSO in order to access the data.
 
-The data is available as events or public properties which implement INotifyPropertyChanged.
+The data is available as events, public properties which implement INotifyPropertyChanged or WebApi.
 
 ### Features
 - Read machine state (Running, Paused, Stopped, Finished, Error)
 - Read current measurement plan data
 - Read measurement results
+- WebApi
 
 ### Planned Features
 - Read current stylus and probe
@@ -16,7 +17,6 @@ The data is available as events or public properties which implement INotifyProp
 - Release NuGet
 - Local WPF client
 - Add Mqqt client
-- Add RestApi
 - Add OPC client/server
 
 ------------
@@ -57,29 +57,18 @@ The data is available as events or public properties which implement INotifyProp
 ### Example
 
 ```csharp
-// Initialize new API
-calypso = new Calypso(new CalypsoConfiguration());
+// Build new api
+var calypso = new CalypsoBuilder()
+                .Configure(config => { config.CMMObserverFolderPath = @"C:/Users/Public/Documents/Zeiss/CMMObserver"; })
+                .AddWebApi(webHostBuilder => { webHostBuilder.UseUrls("http://localhost:5000"); })                                        
+                .Build();
 
 // Bind events
 calypso.MeasurementStarted += Calypso_MeasurementStarted;
 calypso.MeasurementFinished += Calypso_MeasurementFinished;
 calypso.CalypsoException += Calypso_CalypsoException;
 
-// This will be called when the measurement has been started
-private void Calypso_MeasurementStarted(object sender, MeasurementStartEventArgs e)
-{
-    Debug.WriteLine($"{e.MeasurementPlan.FileName} started.");
-}
+// Start
+await calypso.StartAsync();
 
-// This will be called when the measurement has finished
-private void Calypso_MeasurementFinished(object sender, MeasurementFinishEventArgs e)
-{
-    Debug.WriteLine($"{e.MeasurementPlan.FileName} finished with {e.MeasurementResult.Measurements.Count} measurement(s).");
-}
-
-// Catch api errors
-private void Calypso_CalypsoException(object sender, CalypsoExceptionEventArgs e)
-{
-    // Handle api exception
-}
 ```

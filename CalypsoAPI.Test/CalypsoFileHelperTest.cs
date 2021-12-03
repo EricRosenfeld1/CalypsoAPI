@@ -1,9 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using CalypsoAPI.Core.Models.State;
-using CalypsoAPI.Core;
-using System.Reflection;
+﻿using CalypsoAPI;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CalypsoAPI.Test
@@ -18,8 +16,7 @@ namespace CalypsoAPI.Test
             var result = await CalypsoFileHelper.GetCommandFileAsync(path);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual<string>("set_cnc_end", result.state);
-            Assert.AreEqual(@"c:\Users\Public\Documents\Zeiss\CALYPSO\workarea\results\Test_chr.txt", result.chrPath);
+            Assert.AreEqual<string>("set_cnc_start", result.state);
         }
 
         [TestMethod]
