@@ -1,6 +1,6 @@
 # CalypsoAPI
 
-CalypsoAPI is a .NET library used to access data of Zeiss&copy; measuring machines using Calypso software.  The libray must be executed on the computer running CALYPSO in order to access the data.
+CalypsoAPI is a .NET library used to access data of Zeiss&copy; measuring machines using Calypso software.  The library must be executed on the computer running CALYPSO in order to access the data.
 
 The data is available as events, public properties which implement INotifyPropertyChanged or WebApi.
 
