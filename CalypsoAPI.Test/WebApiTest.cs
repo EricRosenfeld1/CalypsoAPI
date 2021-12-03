@@ -9,6 +9,10 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Threading.Tasks;
+using CalypsoAPI.WebApi;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace CalypsoAPI.Test
 {
@@ -43,5 +47,6 @@ namespace CalypsoAPI.Test
 
             Assert.AreEqual("Running", state);
         }
+
     }
 }

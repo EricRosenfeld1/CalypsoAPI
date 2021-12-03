@@ -23,14 +23,12 @@ namespace CalypsoAPI.WebApi
                 .Build();
         }
 
-        public WebApi(ICalypso calypso, Action<IHostBuilder> webBuilder)
+        public WebApi(ICalypso calypso, Action<IWebHostBuilder> webBuilder)
         {
             _calypso = calypso;
-            var builder = CreateHostBuilder(null);
-
-            webBuilder(builder);
-
-            _host = builder.Build();
+            _host = CreateHostBuilder(null)
+                .ConfigureWebHostDefaults(webBuilder)
+                .Build();
         }
 
         private IHostBuilder CreateHostBuilder(string[] args) =>
