@@ -1,10 +1,10 @@
-﻿using CalypsoAPI.Core.Events;
-using CalypsoAPI.Core.Models.State;
+﻿using CalypsoAPI.Events;
+using CalypsoAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CalypsoAPI.Core.Interface
+namespace CalypsoAPI.Interface
 {
     public interface ICalypso : IDisposable
     {

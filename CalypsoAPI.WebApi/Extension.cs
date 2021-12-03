@@ -1,4 +1,4 @@
-﻿using CalypsoAPI.Core;
+﻿using CalypsoAPI;
 using Microsoft.Extensions.Hosting;
 using System;
 

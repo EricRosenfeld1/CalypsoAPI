@@ -1,6 +1,7 @@
-﻿using CalypsoAPI.Core;
-using CalypsoAPI.Core.Interface;
-using CalypsoAPI.Core.Models.State;
+﻿using CalypsoAPI;
+using CalypsoAPI.Interface;
+using CalypsoAPI.Models;
+using CalypsoAPI.Test.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;

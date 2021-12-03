@@ -1,4 +1,4 @@
-﻿using CalypsoAPI.Core;
+﻿using CalypsoAPI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Reflection;

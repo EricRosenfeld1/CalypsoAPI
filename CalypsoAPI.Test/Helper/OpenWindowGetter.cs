@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CalypsoAPI.Test
+namespace CalypsoAPI.Test.Helper
 {
     using System.Runtime.InteropServices;
     using HWND = System.IntPtr;

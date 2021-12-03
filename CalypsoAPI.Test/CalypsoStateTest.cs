@@ -1,4 +1,5 @@
-using CalypsoAPI.Core;
+using CalypsoAPI;
+using CalypsoAPI.Test.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
@@ -56,13 +57,13 @@ namespace CalypsoAPI.Test
         public void WindowMessages_Test()
         {
             SendMessage(messageWindow, (uint)WM_ZEISS_MDE_MSG_CNC_START, IntPtr.Zero, IntPtr.Zero);
-            Assert.AreEqual(CalypsoAPI.Core.Status.Running, calypso.State.Status);
+            Assert.AreEqual(Status.Running, calypso.State.Status);
 
             SendMessage(messageWindow, (uint)WM_ZEISS_MDE_MSG_CNC_STOP, IntPtr.Zero, IntPtr.Zero);
-            Assert.AreEqual(CalypsoAPI.Core.Status.Paused, calypso.State.Status);
+            Assert.AreEqual(Status.Paused, calypso.State.Status);
 
             SendMessage(messageWindow, (uint)WM_ZEISS_MDE_MSG_CNC_END, IntPtr.Zero, IntPtr.Zero);
-            Assert.AreEqual(CalypsoAPI.Core.Status.Finished, calypso.State.Status);
+            Assert.AreEqual(Status.Finished, calypso.State.Status);
         }
 
     }

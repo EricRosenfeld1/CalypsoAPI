@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CalypsoAPI.Core
+namespace CalypsoAPI
 {
-    public static class Extension
+    public static class Extensions
     {
         public static Calypso Configure(this Calypso calypso, Action<CalypsoConfiguration> configuration)
         {

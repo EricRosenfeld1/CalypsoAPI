@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalypsoAPI.Core", "CalypsoAPI.Core\CalypsoAPI.Core.csproj", "{52511231-9D62-465C-A526-4C6F33503526}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalypsoAPI", "CalypsoAPI\CalypsoAPI.csproj", "{52511231-9D62-465C-A526-4C6F33503526}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalypsoAPI.WebApi", "CalypsoAPI.WebApi\CalypsoAPI.WebApi.csproj", "{0CF4821E-D47E-4628-B430-3C4026BA9B5C}"
 EndProject

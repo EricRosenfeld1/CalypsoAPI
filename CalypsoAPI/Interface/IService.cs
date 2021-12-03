@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CalypsoAPI.Core.Interface
+namespace CalypsoAPI.Interface
 {
     public interface IService
     {

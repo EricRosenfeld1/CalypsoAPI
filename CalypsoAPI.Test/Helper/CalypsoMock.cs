@@ -1,12 +1,12 @@
-﻿using CalypsoAPI.Core;
-using CalypsoAPI.Core.Events;
-using CalypsoAPI.Core.Interface;
-using CalypsoAPI.Core.Models.State;
+﻿using CalypsoAPI;
+using CalypsoAPI.Events;
+using CalypsoAPI.Interface;
+using CalypsoAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CalypsoAPI.Test
+namespace CalypsoAPI.Test.Helper
 {
     public class CalypsoMock : ICalypso
     {

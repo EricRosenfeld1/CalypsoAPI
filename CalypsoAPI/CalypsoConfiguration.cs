@@ -1,4 +1,4 @@
-﻿namespace CalypsoAPI.Core
+﻿namespace CalypsoAPI
 {
     public class CalypsoConfiguration
     {

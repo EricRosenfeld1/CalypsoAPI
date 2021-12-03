@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalypsoAPI.Core\CalypsoAPI.Core.csproj" />
     <ProjectReference Include="..\CalypsoAPI.WebApi\CalypsoAPI.WebApi.csproj" />
   </ItemGroup>
 

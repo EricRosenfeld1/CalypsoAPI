@@ -1,5 +1,5 @@
-﻿using CalypsoAPI.Core.Interface;
-using CalypsoAPI.Core.Models.State;
+﻿using CalypsoAPI.Interface;
+using CalypsoAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

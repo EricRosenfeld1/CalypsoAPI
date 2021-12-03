@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalypsoAPI.Core\CalypsoAPI.Core.csproj" />
+    <ProjectReference Include="..\CalypsoAPI\CalypsoAPI.csproj" />
   </ItemGroup>
 
 </Project>
