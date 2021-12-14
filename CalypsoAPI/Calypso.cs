@@ -52,8 +52,6 @@ namespace CalypsoAPI
                 if (!Directory.Exists(Configuration.ChrDestinationFolderPath))
                     throw new DirectoryNotFoundException("Chr destination folder does not exist!");
 
-            IsRunning = true;
-
             _messageForm.CmmStateChanged += OnCmmStateChanged;
             _messageForm.Show();
 
@@ -68,6 +66,8 @@ namespace CalypsoAPI
                     CalypsoException?.Invoke(this, new CalypsoExceptionEventArgs() { Exception = ex });
                 }
             }
+
+            IsRunning = true;
         }
 
         /// <summary>
