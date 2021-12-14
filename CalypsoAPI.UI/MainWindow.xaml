@@ -8,5 +8,15 @@
         d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
         Title="CalypsoAPI UI" Height="450" Width="800">
-    <Grid/>
+    <Grid>
+        <DataGrid ItemsSource="{Binding Calypso.State.LatestMeasurementResults.Measurements, UpdateSourceTrigger=PropertyChanged}" CanUserSortColumns="True"
+                           ScrollViewer.CanContentScroll="True" CanUserAddRows="False" SelectedIndex="0" EnableColumnVirtualization="True" IsReadOnly="True" SelectionMode="Single" VerticalAlignment="Top" Margin="0 30 0 0" Height="300"/>
+
+        <Label Content="{Binding Calypso.State.Status, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <Button Content="Start" Command="{Binding StartCalypsoAsyncCommand}" Width="100" Height="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10 0 0 10"/>
+        <Button Content="Stop" Command="{Binding StopCalypsoAsyncCommand}" Width="100" Height="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="120 0 0 10"/>
+
+
+    </Grid>
 </Window>

@@ -2,6 +2,8 @@ using CalypsoAPI.Interface;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Threading.Tasks;
 
@@ -25,6 +27,10 @@ namespace CalypsoAPI.WebApi
 
         public WebApi(ICalypso calypso, Action<IWebHostBuilder> webBuilder)
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File("log.txt")
+                .CreateLogger();
+
             _calypso = calypso;
             _host = CreateHostBuilder(null)
                 .ConfigureWebHostDefaults(webBuilder)
@@ -33,6 +39,7 @@ namespace CalypsoAPI.WebApi
 
         private IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

@@ -157,11 +157,13 @@ namespace CalypsoAPI
                                 FetPath = command.fetPath,
                                 ToleranceState = command.toleranceState
                             };
+                            var res = await CalypsoFileHelper.GetMeasurementResultAsync(command.chrPath);
+                            State.LatestMeasurementResults = res;
                             MeasurementFinished?.Invoke(this, new MeasurementFinishEventArgs()
                             {
                                 MeasurementInfo = info,
                                 MeasurementPlan = State.MeasurementPlan,
-                                MeasurementResult = await CalypsoFileHelper.GetMeasurementResultAsync(command.chrPath)
+                                MeasurementResult = res
                             });
                         }
                         break;

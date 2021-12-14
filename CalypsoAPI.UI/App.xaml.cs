@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using CalypsoAPI.Interface;
 using CalypsoAPI.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,8 +41,10 @@ namespace CalypsoAPI.UI
         private static IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
+
             services.AddTransient<MainViewModel>();
-            services.AddSingleton<CalypsoService>();
+         
+            //services.AddSingleton<CalypsoService>();
 
             return services.BuildServiceProvider();
         }
