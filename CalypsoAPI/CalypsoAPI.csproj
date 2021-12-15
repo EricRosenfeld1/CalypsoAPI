@@ -91,6 +91,7 @@
     </Compile>
     <Compile Include="Models\ObserverFile.cs" />
     <Compile Include="CalypsoFileHelper.cs" />
+    <Compile Include="WindowInteract.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MessageForm.resx">

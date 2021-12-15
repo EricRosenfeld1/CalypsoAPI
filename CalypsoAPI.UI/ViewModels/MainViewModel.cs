@@ -37,15 +37,9 @@ namespace CalypsoAPI.UI.ViewModels
                 .Build();
 
             Calypso.CalypsoException += Calypso_CalypsoException;
-            Calypso.MeasurementFinished += Calypso_MeasurementFinished;
 
             StartCalypsoAsyncCommand = new AsyncRelayCommand(Calypso.StartAsync);
             StopCalypsoAsyncCommand = new AsyncRelayCommand(Calypso.StopAsync);
-        }
-
-        private void Calypso_MeasurementFinished(object sender, Events.MeasurementFinishEventArgs e)
-        {
-        
         }
 
         private void Calypso_CalypsoException(object sender, Events.CalypsoExceptionEventArgs e)

@@ -65,7 +65,6 @@ namespace CalypsoAPI
                 {
                     try
                     {
-
                         observerFile.GetType().GetProperty(tokens[0].Trim(), BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static).SetValue(observerFile, tokens[1].Trim());
                     }
                     catch (Exception) { }
@@ -79,10 +78,8 @@ namespace CalypsoAPI
         {
             var commandFile = new CommandFile();
             var tokens = data.Split(new string[] { "\t" }, StringSplitOptions.None);
-            if (tokens.Length == 0)
-                return null;
             
-                commandFile.state = tokens[0].Trim();
+            commandFile.state = tokens[0].Trim();
             if (commandFile.state == "set_cnc_end" && tokens.Length == 5)
             {
                 commandFile.toleranceState = tokens[1].Trim();

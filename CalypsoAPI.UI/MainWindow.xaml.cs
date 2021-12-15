@@ -18,6 +18,7 @@ using CalypsoAPI.Interface;
 using Microsoft.Toolkit.Mvvm;
 using Microsoft.Extensions.DependencyInjection;
 using CalypsoAPI.UI.ViewModels;
+using System.Diagnostics;
 
 namespace CalypsoAPI.UI
 {
@@ -33,6 +34,7 @@ namespace CalypsoAPI.UI
             InitializeComponent();
             this.DataContext = App.Current.Services.GetService<MainViewModel>();
         }
+
 
     }
 }

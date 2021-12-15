@@ -25,6 +25,5 @@
         public string PrintPlots { get; set; } = string.Empty;
         public string RunMode { get; set; } = string.Empty;
         public string Speed { get; set; } = string.Empty;
-
     }
 }

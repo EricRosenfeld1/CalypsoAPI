@@ -10,7 +10,7 @@ namespace CalypsoAPI
 {
     public class Calypso : ICalypso
     {
-        private MessageForm _messageForm = new MessageForm();
+        private MessageForm _messageForm;
 
         public event EventHandler<MeasurementStartEventArgs> MeasurementStarted;
         public event EventHandler<MeasurementFinishEventArgs> MeasurementFinished;
@@ -52,6 +52,7 @@ namespace CalypsoAPI
                 if (!Directory.Exists(Configuration.ChrDestinationFolderPath))
                     throw new DirectoryNotFoundException("Chr destination folder does not exist!");
 
+            _messageForm = new MessageForm();
             _messageForm.CmmStateChanged += OnCmmStateChanged;
             _messageForm.Show();
 
@@ -76,6 +77,7 @@ namespace CalypsoAPI
         public async Task StopAsync()
         {
             _messageForm.CmmStateChanged -= OnCmmStateChanged;
+            _messageForm.Close();
 
             foreach (var service in Services)
             {
@@ -88,7 +90,6 @@ namespace CalypsoAPI
                     CalypsoException?.Invoke(this, new CalypsoExceptionEventArgs() { Exception = ex });
                 }
             }
-
             IsRunning = false;
         }
 
@@ -141,6 +142,7 @@ namespace CalypsoAPI
                                 OperatorId = start.operid,
                                 PartNumber = start.partnbinc
                             };
+
                             MeasurementStarted?.Invoke(this, new MeasurementStartEventArgs() { MeasurementPlan = State.MeasurementPlan });
                         }
                         else if (command.state == "set_cnc_cont")
@@ -159,6 +161,10 @@ namespace CalypsoAPI
                             };
                             var res = await CalypsoFileHelper.GetMeasurementResultAsync(command.chrPath);
                             State.LatestMeasurementResults = res;
+
+                            if (Configuration.CopyChrFileAfterReading)
+                                System.IO.File.Copy(command.chrPath,Path.Combine(Configuration.ChrDestinationFolderPath, Path.GetFileName(command.chrPath)));
+                            
                             MeasurementFinished?.Invoke(this, new MeasurementFinishEventArgs()
                             {
                                 MeasurementInfo = info,
